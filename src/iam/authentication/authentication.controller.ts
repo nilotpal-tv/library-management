@@ -1,7 +1,9 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { Reader } from '@prisma/client';
+import { Librarian, Reader } from '@prisma/client';
+import { SignInDto } from './dtos/sign-in.dto';
 import { SignUpDto } from './dtos/sign-up.dto';
 import { AuthenticationService } from './services/authentication.service';
+import { TokenResponse } from './types/token-response';
 
 @Controller('auth')
 export class AuthenticationController {
@@ -14,13 +16,18 @@ export class AuthenticationController {
 
   @HttpCode(HttpStatus.OK)
   @Post('user-login')
-  async signinUser() {}
+  async signinUser(@Body() signInDto: SignInDto): Promise<TokenResponse> {
+    return await this.authService.loginReader(signInDto);
+  }
 
   @Post('librarian-signup')
-  async signupLibrarian(@Body() signUpDto: SignUpDto) {
+  async signupLibrarian(@Body() signUpDto: SignUpDto): Promise<Librarian> {
     return await this.authService.registerLibrarian(signUpDto);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Post('librarian-login')
-  async signinLibrarian() {}
+  async signinLibrarian(@Body() signInDto: SignInDto): Promise<TokenResponse> {
+    return await this.authService.loginLibrarian(signInDto);
+  }
 }
