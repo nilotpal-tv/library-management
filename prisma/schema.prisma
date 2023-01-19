@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+model Reader {
+  id          Int       @id @default(autoincrement())
+  firstName   String
+  middleName  String?
+  lastName    String
+  email       String    @unique
+  password    String
+  gender      Gender
+  reports     Reports[]
+  phoneNumber String    @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("readers")
+}
+
+model Librarian {
+  id          Int       @id @default(autoincrement())
+  firstName   String
+  middleName  String?
+  lastName    String
+  email       String    @unique
+  password    String
+  gender      Gender
+  reports     Reports[]
+  phoneNumber String    @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("librarians")
+}
+
+model Book {
+  id              Int       @id @default(autoincrement())
+  title           String
+  authors         String[]
+  categorys       String[]
+  publisher       String
+  publicationDate DateTime
+  price           Int
+  reports         Reports[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Reports {
+  id           Int       @id @default(autoincrement())
+  readerId     Int
+  reader       Reader    @relation(fields: [readerId], references: [id])
+  approverId   Int
+  librarian    Librarian @relation(fields: [approverId], references: [id])
+  bookId       Int
+  book         Book      @relation(fields: [bookId], references: [id])
+  dueDate      DateTime
+  returnedDate DateTime
+  borrowedDate DateTime  @default(now())
+  hasReturned  Boolean   @default(false)
+  penaltyId    Int
+  penalty      Penalty   @relation(fields: [penaltyId], references: [id])
+}
+
+model Penalty {
+  id        Int       @id @default(autoincrement())
+  name      String
+  price     Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  reports   Reports[]
+}

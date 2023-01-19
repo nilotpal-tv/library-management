@@ -2,6 +2,12 @@
 /dist
 /node_modules
 
+# Env
+.env*
+
+Docker-compose.yml
+prisma/migrations
+
 # Logs
 logs
 *.log
