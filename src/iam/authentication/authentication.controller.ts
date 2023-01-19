@@ -12,7 +12,7 @@ import { TokenResponse } from './types/token-response';
 export class AuthenticationController {
   constructor(private readonly authService: AuthenticationService) {}
 
-  @Post('user-signup')
+  @Post('signup')
   async signupUser(@Body() signUpDto: SignUpDto): Promise<Reader> {
     const reader = await this.authService.registerReader(signUpDto);
     delete reader.password;
@@ -20,7 +20,7 @@ export class AuthenticationController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post('user-login')
+  @Post('login')
   async signinUser(@Body() signInDto: SignInDto): Promise<TokenResponse> {
     return await this.authService.loginReader(signInDto);
   }

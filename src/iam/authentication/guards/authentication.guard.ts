@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AUTH_TYPE_KEY } from '../decorators/auth-type.decorator';
 import { AuthType } from '../enums/auth-type.enum';
@@ -27,6 +32,7 @@ export class AuthenticationGuard implements CanActivate {
     for (const guard of guards) {
       const canActivate = await Promise.resolve(guard.canActivate(context));
       if (canActivate) return true;
+      throw new UnauthorizedException('Unauthorized. You must login.');
     }
   }
 }
