@@ -55,6 +55,8 @@ model Book {
   reports         Reports[]
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  @@map("books")
 }
 
 model Reports {
@@ -71,6 +73,8 @@ model Reports {
   hasReturned  Boolean   @default(false)
   penaltyId    Int
   penalty      Penalty   @relation(fields: [penaltyId], references: [id])
+
+  @@map("reports")
 }
 
 model Penalty {
@@ -80,4 +84,6 @@ model Penalty {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   reports   Reports[]
+
+  @@map("penalties")
 }
