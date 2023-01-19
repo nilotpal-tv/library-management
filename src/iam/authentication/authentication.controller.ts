@@ -11,7 +11,9 @@ export class AuthenticationController {
 
   @Post('user-signup')
   async signupUser(@Body() signUpDto: SignUpDto): Promise<Reader> {
-    return await this.authService.registerReader(signUpDto);
+    const reader = await this.authService.registerReader(signUpDto);
+    delete reader.password;
+    return reader;
   }
 
   @HttpCode(HttpStatus.OK)
@@ -22,7 +24,9 @@ export class AuthenticationController {
 
   @Post('librarian-signup')
   async signupLibrarian(@Body() signUpDto: SignUpDto): Promise<Librarian> {
-    return await this.authService.registerLibrarian(signUpDto);
+    const librarian = await this.authService.registerLibrarian(signUpDto);
+    delete librarian.password;
+    return librarian;
   }
 
   @HttpCode(HttpStatus.OK)
