@@ -48,7 +48,7 @@ model Book {
   id              Int       @id @default(autoincrement())
   title           String
   authors         String[]
-  categorys       String[]
+  categories      String[]
   publisher       String
   publicationDate DateTime
   price           Int
