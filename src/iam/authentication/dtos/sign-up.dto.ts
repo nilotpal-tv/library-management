@@ -8,7 +8,6 @@ import {
   MinLength,
 } from 'class-validator';
 import { Gender } from '../enums/gender.enum';
-import { AddressDto } from './address.dto';
 
 export class SignUpDto {
   @IsString()
@@ -35,7 +34,4 @@ export class SignUpDto {
 
   @IsPhoneNumber('IN')
   phoneNumber: string;
-
-  @IsNotEmptyObject()
-  address: AddressDto;
 }

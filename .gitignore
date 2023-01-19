@@ -6,6 +6,7 @@
 .env*
 
 Docker-compose.yml
+prisma/migrations
 
 # Logs
 logs
