@@ -1,10 +1,13 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { Librarian, Reader } from '@prisma/client';
+import { Auth } from './decorators/auth-type.decorator';
 import { SignInDto } from './dtos/sign-in.dto';
 import { SignUpDto } from './dtos/sign-up.dto';
+import { AuthType } from './enums/auth-type.enum';
 import { AuthenticationService } from './services/authentication.service';
 import { TokenResponse } from './types/token-response';
 
+@Auth(AuthType.None)
 @Controller('auth')
 export class AuthenticationController {
   constructor(private readonly authService: AuthenticationService) {}
