@@ -8,6 +8,7 @@ import { AccessTokenGuard } from './authentication/guards/access-token.guard';
 import { AuthenticationGuard } from './authentication/guards/authentication.guard';
 import { AuthenticationService } from './authentication/services/authentication.service';
 import { TokenService } from './authentication/services/token.service';
+import { AuthorizationGuard } from './authorization/guards/authorization.guard';
 import jwtConfig from './config/jwt.config';
 import { BcryptService } from './hashing/bcrypt.service';
 import { HashingService } from './hashing/hashing.service';
@@ -23,6 +24,7 @@ import { HashingService } from './hashing/hashing.service';
     AuthenticationService,
     AccessTokenGuard,
     { provide: HashingService, useClass: BcryptService },
+    { provide: APP_GUARD, useClass: AuthorizationGuard },
     { provide: APP_GUARD, useClass: AuthenticationGuard },
   ],
   controllers: [AuthenticationController],
