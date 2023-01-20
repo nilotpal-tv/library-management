@@ -7,11 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Gender {
-  MALE
-  FEMALE
-}
-
 model Reader {
   id          Int       @id @default(autoincrement())
   firstName   String
@@ -19,7 +14,7 @@ model Reader {
   lastName    String
   email       String    @unique
   password    String
-  gender      Gender
+  gender      String
   reports     Reports[]
   phoneNumber String    @unique
   createdAt   DateTime  @default(now())
@@ -35,7 +30,7 @@ model Librarian {
   lastName    String
   email       String    @unique
   password    String
-  gender      Gender
+  gender      String
   reports     Reports[]
   phoneNumber String    @unique
   createdAt   DateTime  @default(now())
@@ -46,13 +41,13 @@ model Librarian {
 
 model Book {
   id              Int       @id @default(autoincrement())
+  price           Int
   title           String
+  publisher       String
   authors         String[]
   categories      String[]
-  publisher       String
-  publicationDate DateTime
-  price           Int
   reports         Reports[]
+  publicationDate DateTime
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -71,6 +66,7 @@ model Reports {
   returnedDate DateTime
   borrowedDate DateTime  @default(now())
   hasReturned  Boolean   @default(false)
+  hasApproved  Boolean   @default(false)
   penaltyId    Int
   penalty      Penalty   @relation(fields: [penaltyId], references: [id])
 
