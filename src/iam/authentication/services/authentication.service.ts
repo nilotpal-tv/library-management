@@ -4,6 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Librarian, Reader } from '@prisma/client';
+import { UserType } from 'src/iam/authorization/enums/user-type.enum';
 import { HashingService } from 'src/iam/hashing/hashing.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SignInDto } from '../dtos/sign-in.dto';
@@ -79,6 +80,7 @@ export class AuthenticationService {
     const tokens = await this.tokenService.signTokens({
       sub: reader.id,
       email: reader.email,
+      userType: UserType.Reader,
     });
     return tokens;
   }
@@ -120,6 +122,7 @@ export class AuthenticationService {
     const tokens = await this.tokenService.signTokens({
       sub: librarian.id,
       email: librarian.email,
+      userType: UserType.Librarian,
     });
     return tokens;
   }
