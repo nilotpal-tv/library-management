@@ -19,6 +19,7 @@ export class TokenService {
     payload: JwtPayload,
     tokenType: TokenType,
   ): Promise<string> {
+    console.log({ payload });
     return this.jwtService.signAsync(payload, {
       audience: this.jwtConfiguration.JWT_TOKEN_AUDIENCE,
       issuer: this.jwtConfiguration.JWT_TOKEN_ISSUER,

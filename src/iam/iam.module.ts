@@ -23,9 +23,9 @@ import { HashingService } from './hashing/hashing.service';
     TokenService,
     AuthenticationService,
     AccessTokenGuard,
+    AuthenticationGuard,
     { provide: HashingService, useClass: BcryptService },
     { provide: APP_GUARD, useClass: AuthorizationGuard },
-    { provide: APP_GUARD, useClass: AuthenticationGuard },
   ],
   controllers: [AuthenticationController],
 })
