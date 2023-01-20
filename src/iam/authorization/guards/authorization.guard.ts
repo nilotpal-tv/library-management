@@ -1,5 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { AUTH_TYPE_KEY } from 'src/iam/authentication/decorators/auth-type.decorator';
+import { AuthType } from 'src/iam/authentication/enums/auth-type.enum';
+import { AuthenticationGuard } from 'src/iam/authentication/guards/authentication.guard';
 import { TokenService } from 'src/iam/authentication/services/token.service';
 import { JwtPayload } from 'src/iam/authentication/types/jwt-payload';
 import { USER_TYPE_KEY } from '../decorators/user-type.decorator';
@@ -7,18 +10,24 @@ import { UserType } from '../enums/user-type.enum';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
-  private static defaultUserType: UserType = UserType.Reader;
-
   constructor(
-    private readonly tokenService: TokenService,
     private readonly reflector: Reflector,
+    private readonly tokenService: TokenService,
+    private readonly authenticationGuard: AuthenticationGuard,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const authTypes = this.reflector.getAllAndOverride<AuthType[]>(
+      AUTH_TYPE_KEY,
+      [context.getHandler(), context.getClass()],
+    ) ?? [AuthType.Bearer];
+    const authType = authTypes[0];
+
+    await this.authenticationGuard.canActivate(context);
+    if (authType === AuthType.None) return true;
+
     const request = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeder(request);
-    if (!token) return false;
-
     const payload = (await this.tokenService.verifyToken(
       token,
       'ACCESS_TOKEN',
@@ -28,14 +37,8 @@ export class AuthorizationGuard implements CanActivate {
       USER_TYPE_KEY,
       [context.getHandler(), context.getClass()],
     );
-    const userType =
-      userTypes && userTypes.length > 0
-        ? userTypes[0]
-        : AuthorizationGuard.defaultUserType;
 
-    console.log({ userType, payload });
-    if (userType.toLowerCase() !== payload.userType.toLowerCase()) return false;
-    return true;
+    return userTypes.some((userType) => userType === payload.userType);
   }
 
   private extractTokenFromHeder(request: Request): string | undefined {
