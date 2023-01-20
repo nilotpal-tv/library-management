@@ -4,14 +4,12 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
+  Patch,
   Post,
   Query,
-  Patch,
 } from '@nestjs/common';
-import { ParseIntPipe } from '@nestjs/common';
 import { Book } from '@prisma/client';
-import { Auth } from 'src/iam/authentication/decorators/auth-type.decorator';
-import { AuthType } from 'src/iam/authentication/enums/auth-type.enum';
 import { BooksService } from './books.service';
 import { AddBookDto } from './dtos/add-book.dto';
 import { UpdateBookDto } from './dtos/update-book-dto';
