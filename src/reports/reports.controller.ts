@@ -1,5 +1,5 @@
 import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
-import { Reports } from '@prisma/client';
+import { Report } from '@prisma/client';
 import { Auth } from 'src/iam/authentication/decorators/auth-type.decorator';
 import { AuthType } from 'src/iam/authentication/enums/auth-type.enum';
 import { User } from 'src/iam/authorization/decorators/user-type.decorator';
@@ -25,7 +25,7 @@ export class ReportsController {
   async getApproved(
     @Query('skip', ParseIntPipe) skip: number,
     @Query('limit', ParseIntPipe) limit: number,
-  ): Promise<Reports[]> {
+  ): Promise<Report[]> {
     return await this.reportsService.findApprovedReports({
       limit,
       skip,
@@ -38,7 +38,7 @@ export class ReportsController {
     @Query('skip', ParseIntPipe) skip: number,
     @Query('limit', ParseIntPipe) limit: number,
     @Param('userId', ParseIntPipe) userId: number,
-  ): Promise<Reports[]> {
+  ): Promise<Report[]> {
     return await this.reportsService.findAllByUserId(userId, {
       limit,
       skip,
@@ -51,7 +51,7 @@ export class ReportsController {
     @Query('skip', ParseIntPipe) skip: number,
     @Query('limit', ParseIntPipe) limit: number,
     @Param('userId', ParseIntPipe) userId: number,
-  ): Promise<Reports[]> {
+  ): Promise<Report[]> {
     return await this.reportsService.findApprovedByUserId(userId, {
       limit,
       skip,

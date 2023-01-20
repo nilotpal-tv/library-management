@@ -24,7 +24,7 @@ export class AuthenticationController {
 
   @User(UserType.Reader)
   @HttpCode(HttpStatus.OK)
-  @Post('login')
+  @Post('signin')
   async signinUser(@Body() signInDto: SignInDto): Promise<TokenResponse> {
     return await this.authService.loginReader(signInDto);
   }
@@ -39,7 +39,7 @@ export class AuthenticationController {
 
   @User(UserType.Librarian)
   @HttpCode(HttpStatus.OK)
-  @Post('librarian-login')
+  @Post('librarian-signin')
   async signinLibrarian(@Body() signInDto: SignInDto): Promise<TokenResponse> {
     return await this.authService.loginLibrarian(signInDto);
   }
