@@ -8,53 +8,54 @@ datasource db {
 }
 
 model Reader {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   firstName   String
   middleName  String?
   lastName    String
-  email       String    @unique
+  email       String   @unique
   password    String
   gender      String
-  reports     Reports[]
-  phoneNumber String    @unique
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  reports     Report[]
+  phoneNumber String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("readers")
 }
 
 model Librarian {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   firstName   String
   middleName  String?
   lastName    String
-  email       String    @unique
+  email       String   @unique
   password    String
   gender      String
-  reports     Reports[]
-  phoneNumber String    @unique
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  reports     Report[]
+  phoneNumber String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("librarians")
 }
 
 model Book {
-  id              Int       @id @default(autoincrement())
+  id              Int      @id @default(autoincrement())
   price           Int
-  title           String
+  title           String   @unique
   publisher       String
   authors         String[]
   categories      String[]
-  reports         Reports[]
+  reports         Report[]
+  count           Int      @default(1)
   publicationDate DateTime
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@map("books")
 }
 
-model Reports {
+model Report {
   id           Int       @id @default(autoincrement())
   readerId     Int
   reader       Reader    @relation(fields: [readerId], references: [id])
@@ -67,19 +68,6 @@ model Reports {
   borrowedDate DateTime  @default(now())
   hasReturned  Boolean   @default(false)
   hasApproved  Boolean   @default(false)
-  penaltyId    Int
-  penalty      Penalty   @relation(fields: [penaltyId], references: [id])
 
   @@map("reports")
-}
-
-model Penalty {
-  id        Int       @id @default(autoincrement())
-  name      String
-  price     Int
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  reports   Reports[]
-
-  @@map("penalties")
 }

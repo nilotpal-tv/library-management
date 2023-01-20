@@ -26,6 +26,10 @@ export class BooksService {
     return book;
   }
 
+  async findOneByTitle(title: string): Promise<Book> {
+    return this.prisma.book.findUnique({ where: { title } });
+  }
+
   async findByCategory(category: string): Promise<Book[]> {
     return this.prisma.book.findMany({
       where: {
@@ -48,6 +52,9 @@ export class BooksService {
 
     if (addBookDto.authors.length === 0)
       throw new BadRequestException('At least one author is required.');
+
+    const book = await this.findOneByTitle(addBookDto.title);
+    if (book) return this.update(book.id, { count: book.count + 1 });
 
     return this.prisma.book.create({
       data: addBookDto,
