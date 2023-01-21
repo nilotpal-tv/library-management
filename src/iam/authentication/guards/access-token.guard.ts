@@ -1,5 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
+import { ACTIVE_USER_KEY } from '../decorators/active-user.decorator';
 import { TokenService } from '../services/token.service';
 
 @Injectable()
@@ -12,8 +13,10 @@ export class AccessTokenGuard implements CanActivate {
     if (!token) return false;
 
     const payload = await this.tokenService.verifyToken(token, 'ACCESS_TOKEN');
-    if (payload) return true;
-    return false;
+    if (!payload) return false;
+
+    request[ACTIVE_USER_KEY] = payload;
+    return true;
   }
 
   private extractTokenFromHeder(request: Request): string | undefined {
