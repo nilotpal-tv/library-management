@@ -23,8 +23,8 @@ export class AuthorizationGuard implements CanActivate {
     ) ?? [AuthType.Bearer];
     const authType = authTypes[0];
 
-    await this.authenticationGuard.canActivate(context);
     if (authType === AuthType.None) return true;
+    await this.authenticationGuard.canActivate(context);
 
     const request = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeder(request);

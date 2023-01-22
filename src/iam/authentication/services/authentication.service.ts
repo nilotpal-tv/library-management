@@ -27,7 +27,7 @@ export class AuthenticationService {
   }
 
   private async findLibrarianEmail(email: string): Promise<Librarian> {
-    return await this.prismaService.librarian.findUnique({
+    return this.prismaService.librarian.findUnique({
       where: { email },
     });
   }
@@ -39,7 +39,7 @@ export class AuthenticationService {
   }
 
   private async findLibrarianByPhone(phone: string): Promise<Librarian> {
-    return await this.prismaService.librarian.findUnique({
+    return this.prismaService.librarian.findUnique({
       where: { phoneNumber: phone },
     });
   }
@@ -60,11 +60,9 @@ export class AuthenticationService {
     const { password, ...rest } = signupDto;
     const hashedPassword = await this.hashService.hash(password);
 
-    const reader = await this.prismaService.reader.create({
+    return this.prismaService.reader.create({
       data: { ...rest, password: hashedPassword },
     });
-
-    return reader;
   }
 
   async loginReader(signinDto: SignInDto): Promise<TokenResponse> {
@@ -77,12 +75,11 @@ export class AuthenticationService {
     );
     if (!isMatch) throw new UnauthorizedException('Invalid email or password');
 
-    const tokens = await this.tokenService.signTokens({
+    return this.tokenService.signTokens({
       sub: reader.id,
       email: reader.email,
       userType: UserType.Reader,
     });
-    return tokens;
   }
 
   async registerLibrarian(signupDto: SignUpDto): Promise<Librarian> {
@@ -101,11 +98,9 @@ export class AuthenticationService {
     const { password, ...rest } = signupDto;
     const hashedPassword = await this.hashService.hash(password);
 
-    const librarian = await this.prismaService.librarian.create({
+    return this.prismaService.librarian.create({
       data: { ...rest, password: hashedPassword },
     });
-
-    return librarian;
   }
 
   async loginLibrarian(signinDto: SignInDto): Promise<TokenResponse> {
@@ -119,11 +114,10 @@ export class AuthenticationService {
     );
     if (!isMatch) throw new UnauthorizedException('Invalid email or password');
 
-    const tokens = await this.tokenService.signTokens({
+    return this.tokenService.signTokens({
       sub: librarian.id,
       email: librarian.email,
       userType: UserType.Librarian,
     });
-    return tokens;
   }
 }
