@@ -6,6 +6,12 @@ import { BooksModule } from './books/books.module';
 import { ReportsModule } from './reports/reports.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), IamModule, PrismaModule, BooksModule, ReportsModule],
+  imports: [
+    ConfigModule.forRoot(),
+    IamModule,
+    PrismaModule,
+    BooksModule,
+    ReportsModule,
+  ],
 })
 export class AppModule {}
