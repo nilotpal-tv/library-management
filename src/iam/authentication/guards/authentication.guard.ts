@@ -18,8 +18,8 @@ export class AuthenticationGuard implements CanActivate {
   };
 
   constructor(
-    private readonly accessTokenGuard: AccessTokenGuard,
     private readonly reflector: Reflector,
+    private readonly accessTokenGuard: AccessTokenGuard,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

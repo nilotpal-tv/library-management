@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import jwtConfig from '../../config/jwt.config';
@@ -54,10 +54,10 @@ export class TokenService {
       return payload;
     } catch (error) {
       if (error.name === JwtErrorNames.TokenExpiredError)
-        throw new BadRequestException('Session expired. Login again.');
+        throw new UnauthorizedException('Session expired. Login again.');
 
       if (error.name === JwtErrorNames.JsonWebTokenError)
-        throw new BadRequestException('Invalid token.');
+        throw new UnauthorizedException('Invalid token.');
 
       throw error;
     }
