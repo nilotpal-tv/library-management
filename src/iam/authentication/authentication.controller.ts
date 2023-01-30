@@ -3,6 +3,7 @@ import { Librarian, Reader } from '@prisma/client';
 import { User } from '../authorization/decorators/user-type.decorator';
 import { UserType } from '../authorization/enums/user-type.enum';
 import { Auth } from './decorators/auth-type.decorator';
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { SignInDto } from './dtos/sign-in.dto';
 import { SignUpDto } from './dtos/sign-up.dto';
 import { AuthType } from './enums/auth-type.enum';
@@ -42,5 +43,13 @@ export class AuthenticationController {
   @Post('librarian-signin')
   async signinLibrarian(@Body() signInDto: SignInDto): Promise<TokenResponse> {
     return await this.authService.loginLibrarian(signInDto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('refresh-tokens')
+  async refreshTokens(
+    @Body() refreshTokenDto: RefreshTokenDto,
+  ): Promise<TokenResponse> {
+    return await this.authService.refreshTokens(refreshTokenDto);
   }
 }

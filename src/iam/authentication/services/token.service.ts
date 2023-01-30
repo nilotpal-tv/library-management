@@ -1,16 +1,19 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { randomUUID } from 'crypto';
 import jwtConfig from '../../config/jwt.config';
 import { JwtErrorNames } from '../enums/jwt-errors.enum';
 import { JwtPayload } from '../types/jwt-payload';
 import { TokenResponse } from '../types/token-response';
 import { TokenType } from '../types/token-type';
+import { RefreshTokenStorageService } from './refresh-token-storage.service';
 
 @Injectable()
 export class TokenService {
   constructor(
     private readonly jwtService: JwtService,
+    private readonly refreshTokenIdsService: RefreshTokenStorageService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
@@ -34,11 +37,13 @@ export class TokenService {
   }
 
   async signTokens(payload: JwtPayload): Promise<TokenResponse> {
+    const refreshTokenId = randomUUID();
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken(payload, 'ACCESS_TOKEN'),
-      this.signToken(payload, 'REFRESH_TOKEN'),
+      this.signToken({ ...payload, refreshTokenId }, 'REFRESH_TOKEN'),
     ]);
 
+    await this.refreshTokenIdsService.insert(payload.sub, refreshTokenId);
     return { accessToken, refreshToken };
   }
 
@@ -56,10 +61,7 @@ export class TokenService {
       if (error.name === JwtErrorNames.TokenExpiredError)
         throw new UnauthorizedException('Session expired. Login again.');
 
-      if (error.name === JwtErrorNames.JsonWebTokenError)
-        throw new UnauthorizedException('Invalid token.');
-
-      throw error;
+      throw new UnauthorizedException('Invalid token.');
     }
   }
 }
