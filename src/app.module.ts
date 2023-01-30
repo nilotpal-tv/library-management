@@ -4,6 +4,7 @@ import { IamModule } from './iam/iam.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { BooksModule } from './books/books.module';
 import { ReportsModule } from './reports/reports.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ReportsModule } from './reports/reports.module';
     PrismaModule,
     BooksModule,
     ReportsModule,
+    RedisModule,
   ],
 })
 export class AppModule {}

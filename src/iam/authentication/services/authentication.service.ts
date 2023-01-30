@@ -2,14 +2,17 @@ import {
   ConflictException,
   Injectable,
   UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { Librarian, Reader } from '@prisma/client';
 import { UserType } from 'src/iam/authorization/enums/user-type.enum';
 import { HashingService } from 'src/iam/hashing/hashing.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { RefreshTokenDto } from '../dtos/refresh-token.dto';
 import { SignInDto } from '../dtos/sign-in.dto';
 import { SignUpDto } from '../dtos/sign-up.dto';
 import { TokenResponse } from '../types/token-response';
+import { RefreshTokenStorageService } from './refresh-token-storage.service';
 import { TokenService } from './token.service';
 
 @Injectable()
@@ -18,6 +21,7 @@ export class AuthenticationService {
     private readonly hashService: HashingService,
     private readonly prismaService: PrismaService,
     private readonly tokenService: TokenService,
+    private readonly refreshTokenIdsService: RefreshTokenStorageService,
   ) {}
 
   private async findReaderByEmail(email: string): Promise<Reader> {
@@ -118,6 +122,44 @@ export class AuthenticationService {
       sub: librarian.id,
       email: librarian.email,
       userType: UserType.Librarian,
+    });
+  }
+
+  async refreshTokens(
+    refreshTokenDto: RefreshTokenDto,
+  ): Promise<TokenResponse> {
+    const { sub, userType, refreshTokenId } =
+      await this.tokenService.verifyToken(
+        refreshTokenDto.token,
+        'REFRESH_TOKEN',
+      );
+
+    const isValid = await this.refreshTokenIdsService.validate(
+      sub,
+      refreshTokenId,
+    );
+
+    if (!isValid)
+      throw new UnauthorizedException('Session expired. Login again.');
+    if (isValid) await this.refreshTokenIdsService.invalidate(sub);
+
+    let user: Reader | Librarian;
+    if (userType === UserType.Librarian)
+      user = await this.prismaService.librarian.findUnique({
+        where: { id: sub },
+      });
+
+    if (userType === UserType.Reader)
+      user = await this.prismaService.reader.findUnique({
+        where: { id: sub },
+      });
+
+    if (!user) throw new NotFoundException("User doesn't exist.");
+
+    return this.tokenService.signTokens({
+      userType,
+      sub: user.id,
+      email: user.email,
     });
   }
 }
