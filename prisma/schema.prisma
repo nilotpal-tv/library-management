@@ -56,18 +56,18 @@ model Book {
 }
 
 model Report {
-  id           Int       @id @default(autoincrement())
+  id           Int        @id @default(autoincrement())
   readerId     Int
-  reader       Reader    @relation(fields: [readerId], references: [id])
-  approverId   Int
-  librarian    Librarian @relation(fields: [approverId], references: [id])
+  reader       Reader     @relation(fields: [readerId], references: [id])
+  approverId   Int?
+  librarian    Librarian? @relation(fields: [approverId], references: [id])
   bookId       Int
-  book         Book      @relation(fields: [bookId], references: [id])
+  book         Book       @relation(fields: [bookId], references: [id])
   dueDate      DateTime
-  returnedDate DateTime
-  borrowedDate DateTime  @default(now())
-  hasReturned  Boolean   @default(false)
-  hasApproved  Boolean   @default(false)
+  returnedDate DateTime?
+  borrowedDate DateTime   @default(now())
+  hasReturned  Boolean    @default(false)
+  hasApproved  Boolean    @default(false)
 
   @@map("reports")
 }
